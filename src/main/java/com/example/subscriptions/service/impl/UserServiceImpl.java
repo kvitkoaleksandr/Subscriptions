@@ -8,6 +8,7 @@ import com.example.subscriptions.repository.UserRepository;
 import com.example.subscriptions.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public UserDto getUserById(Long id) {
         log.debug("Fetching user with ID: {}", id);
         User user = userRepository.findById(id)
