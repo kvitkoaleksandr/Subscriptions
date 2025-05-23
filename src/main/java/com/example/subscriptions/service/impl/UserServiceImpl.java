@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Default implementation of {@link UserService}.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

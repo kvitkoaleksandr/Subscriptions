@@ -3,6 +3,9 @@ package com.example.subscriptions.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+/**
+ * DTO used for creating a new subscription for a user.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

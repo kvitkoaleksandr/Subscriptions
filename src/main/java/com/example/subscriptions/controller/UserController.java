@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing users.
+ * Provides endpoints for creating, retrieving, updating and deleting users.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing user subscriptions.
+ * Provides endpoints for adding, listing, and deleting subscriptions.
+ */
 @RestController
 @RequestMapping("/users/{userId}/subscriptions")
 @RequiredArgsConstructor

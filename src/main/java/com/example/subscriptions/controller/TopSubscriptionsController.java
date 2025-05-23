@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for retrieving the most popular subscription services.
+ */
 @RestController
 @RequestMapping("/subscriptions")
 @RequiredArgsConstructor

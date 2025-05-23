@@ -2,6 +2,9 @@ package com.example.subscriptions.dto;
 
 import lombok.*;
 
+/**
+ * DTO representing a user's subscription to a service.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
