@@ -3,6 +3,7 @@ package com.example.subscriptions.service.impl;
 import com.example.subscriptions.dto.*;
 import com.example.subscriptions.entity.User;
 import com.example.subscriptions.exception.ResourceNotFoundException;
+import com.example.subscriptions.kafka.UserEventProducer;
 import com.example.subscriptions.mapper.UserMapper;
 import com.example.subscriptions.repository.UserRepository;
 import com.example.subscriptions.service.UserService;
@@ -23,14 +24,19 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserEventProducer userEventProducer;
 
     @Override
     public UserDto createUser(CreateUserRequest request) {
         log.info("Creating user with email: {}", request.getEmail());
         User user = UserMapper.toEntity(request);
         User saved = userRepository.save(user);
-        log.debug("User created with ID: {}", saved.getId());
-        return UserMapper.toDto(saved);
+        UserDto dto = UserMapper.toDto(saved);
+
+        String kafkaMessage = "User created: id=" + dto.getId() + ", email=" + dto.getEmail();
+        userEventProducer.sendUserCreatedEvent(kafkaMessage);
+
+        return dto;
     }
 
     @Override

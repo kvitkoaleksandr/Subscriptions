@@ -4,6 +4,7 @@ import com.example.subscriptions.dto.CreateUserRequest;
 import com.example.subscriptions.dto.UserDto;
 import com.example.subscriptions.entity.User;
 import com.example.subscriptions.exception.ResourceNotFoundException;
+import com.example.subscriptions.kafka.UserEventProducer;
 import com.example.subscriptions.mapper.UserMapper;
 import com.example.subscriptions.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,16 +21,19 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserEventProducer userEventProducer;
+
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userService = new UserServiceImpl(userRepository);
+        userService = new UserServiceImpl(userRepository, userEventProducer);
     }
 
     @Test
-    void shouldCreateUser() {
+    void shouldCreateUserAndSendKafkaEvent() {
         CreateUserRequest request = new CreateUserRequest("John Doe", "john@example.com");
         User user = UserMapper.toEntity(request);
         user.setId(1L);
@@ -43,12 +47,12 @@ class UserServiceImplTest {
         assertThat(result.getEmail()).isEqualTo("john@example.com");
 
         verify(userRepository).save(any(User.class));
+        verify(userEventProducer).sendUserCreatedEvent(contains("User created: id=1"));
     }
 
     @Test
     void shouldGetUserById() {
         User user = User.builder().id(1L).name("Test User").email("test@mail.com").build();
-
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         UserDto result = userService.getUserById(1L);

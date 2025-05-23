@@ -2,14 +2,18 @@ package com.example.subscriptions.controller;
 
 import com.example.subscriptions.dto.CreateUserRequest;
 import com.example.subscriptions.dto.UserDto;
+import com.example.subscriptions.kafka.UserEventProducer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerIT {
@@ -20,12 +24,16 @@ class UserControllerIT {
     @Autowired
     private TestRestTemplate rest;
 
+    @MockBean
+    private UserEventProducer userEventProducer; // <--- вот это ключ!
+
     private String baseUrl() {
         return "http://localhost:" + port + "/users";
     }
 
     @Test
     void shouldCreateAndGetUser() {
+        doNothing().when(userEventProducer).sendUserCreatedEvent(anyString());
         CreateUserRequest request = new CreateUserRequest("Integration Test", "integration@test.com");
 
         ResponseEntity<UserDto> response = rest.postForEntity(baseUrl(), request, UserDto.class);
