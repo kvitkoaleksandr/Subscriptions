@@ -1,13 +1,10 @@
 package com.example.subscriptions.service.impl;
 
-import com.example.subscriptions.dto.CreateSubscriptionRequest;
-import com.example.subscriptions.dto.SubscriptionDto;
-import com.example.subscriptions.entity.Subscription;
-import com.example.subscriptions.entity.User;
+import com.example.subscriptions.dto.*;
+import com.example.subscriptions.entity.*;
 import com.example.subscriptions.exception.ResourceNotFoundException;
 import com.example.subscriptions.repository.SubscriptionRepository;
 import com.example.subscriptions.repository.UserRepository;
-import com.example.subscriptions.service.SubscriptionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -17,7 +14,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class SubscriptionServiceTest {
+class SubscriptionServiceImplTest {
 
     @Mock
     private SubscriptionRepository subscriptionRepository;
@@ -25,7 +22,7 @@ class SubscriptionServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    private SubscriptionService subscriptionService;
+    private SubscriptionServiceImpl subscriptionService;
 
     @BeforeEach
     void setUp() {
@@ -36,9 +33,7 @@ class SubscriptionServiceTest {
     @Test
     void shouldAddSubscriptionForUser() {
         User user = User.builder().id(1L).build();
-        CreateSubscriptionRequest request = CreateSubscriptionRequest.builder()
-                .serviceName("Netflix")
-                .build();
+        CreateSubscriptionRequest request = new CreateSubscriptionRequest("Netflix");
         Subscription saved = Subscription.builder().id(100L).serviceName("Netflix").user(user).build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -51,10 +46,20 @@ class SubscriptionServiceTest {
     }
 
     @Test
+    void shouldThrowWhenAddingSubscriptionToUnknownUser() {
+        CreateSubscriptionRequest request = new CreateSubscriptionRequest("Netflix");
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> subscriptionService.addSubscription(999L, request))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("User not found");
+    }
+
+    @Test
     void shouldReturnUserSubscriptions() {
-        Subscription sub = Subscription.builder().id(1L).serviceName("Netflix").build();
+        Subscription s1 = new Subscription(1L, "Netflix", null);
         when(userRepository.existsById(1L)).thenReturn(true);
-        when(subscriptionRepository.findByUserId(1L)).thenReturn(List.of(sub));
+        when(subscriptionRepository.findByUserId(1L)).thenReturn(List.of(s1));
 
         List<SubscriptionDto> result = subscriptionService.getUserSubscriptions(1L);
 
@@ -63,10 +68,10 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    void shouldThrowWhenUserNotFoundForSubscriptionQuery() {
-        when(userRepository.existsById(999L)).thenReturn(false);
+    void shouldThrowWhenFetchingSubscriptionsOfUnknownUser() {
+        when(userRepository.existsById(2L)).thenReturn(false);
 
-        assertThatThrownBy(() -> subscriptionService.getUserSubscriptions(999L))
+        assertThatThrownBy(() -> subscriptionService.getUserSubscriptions(2L))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
     }
@@ -74,26 +79,35 @@ class SubscriptionServiceTest {
     @Test
     void shouldDeleteUserSubscription() {
         User user = User.builder().id(1L).build();
-        Subscription sub = Subscription.builder().id(10L).serviceName("Netflix").user(user).build();
+        Subscription sub = Subscription.builder().id(11L).serviceName("YouTube").user(user).build();
 
-        when(subscriptionRepository.findById(10L)).thenReturn(Optional.of(sub));
+        when(subscriptionRepository.findById(11L)).thenReturn(Optional.of(sub));
 
-        subscriptionService.deleteSubscription(1L, 10L);
+        subscriptionService.deleteSubscription(1L, 11L);
 
         verify(subscriptionRepository).delete(sub);
     }
 
     @Test
-    void shouldThrowIfSubscriptionDoesNotBelongToUser() {
-        User user1 = User.builder().id(1L).build();
-        User user2 = User.builder().id(2L).build();
-        Subscription sub = Subscription.builder().id(10L).serviceName("Spotify").user(user2).build();
+    void shouldThrowWhenDeletingSubscriptionThatDoesNotBelongToUser() {
+        User userA = User.builder().id(1L).build();
+        User userB = User.builder().id(2L).build();
+        Subscription sub = Subscription.builder().id(15L).serviceName("Spotify").user(userB).build();
 
-        when(subscriptionRepository.findById(10L)).thenReturn(Optional.of(sub));
+        when(subscriptionRepository.findById(15L)).thenReturn(Optional.of(sub));
 
-        assertThatThrownBy(() -> subscriptionService.deleteSubscription(1L, 10L))
+        assertThatThrownBy(() -> subscriptionService.deleteSubscription(1L, 15L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Subscription does not belong to user");
+    }
+
+    @Test
+    void shouldThrowWhenDeletingUnknownSubscription() {
+        when(subscriptionRepository.findById(404L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> subscriptionService.deleteSubscription(1L, 404L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Subscription not found");
     }
 
     @Test
@@ -101,11 +115,10 @@ class SubscriptionServiceTest {
         List<Subscription> allSubs = List.of(
                 new Subscription(1L, "Netflix", null),
                 new Subscription(2L, "Netflix", null),
-                new Subscription(3L, "YouTube", null),
+                new Subscription(3L, "Spotify", null),
                 new Subscription(4L, "YouTube", null),
                 new Subscription(5L, "YouTube", null),
-                new Subscription(6L, "Spotify", null),
-                new Subscription(7L, "Spotify", null)
+                new Subscription(6L, "YouTube", null)
         );
 
         when(subscriptionRepository.findAll()).thenReturn(allSubs);
