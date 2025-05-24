@@ -1,10 +1,12 @@
 package com.example.subscriptions.controller;
 
-import com.example.subscriptions.dto.*;
+import com.example.subscriptions.dto.CreateUserRequest;
+import com.example.subscriptions.dto.UserDto;
 import com.example.subscriptions.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

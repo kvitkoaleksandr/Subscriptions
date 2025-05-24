@@ -1,6 +1,7 @@
 package com.example.subscriptions.service;
 
-import com.example.subscriptions.dto.*;
+import com.example.subscriptions.dto.CreateSubscriptionRequest;
+import com.example.subscriptions.dto.SubscriptionDto;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface SubscriptionService {
     /**
      * Adds a subscription for a user.
      *
-     * @param userId the user ID
+     * @param userId  the user ID
      * @param request the subscription creation request
      * @return created subscription DTO
      */
@@ -29,7 +30,7 @@ public interface SubscriptionService {
     /**
      * Deletes a subscription for a specific user.
      *
-     * @param userId the user ID
+     * @param userId         the user ID
      * @param subscriptionId the subscription ID
      */
     void deleteSubscription(Long userId, Long subscriptionId);

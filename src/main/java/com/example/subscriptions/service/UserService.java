@@ -1,6 +1,7 @@
 package com.example.subscriptions.service;
 
-import com.example.subscriptions.dto.*;
+import com.example.subscriptions.dto.CreateUserRequest;
+import com.example.subscriptions.dto.UserDto;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public interface UserService {
     /**
      * Updates an existing user.
      *
-     * @param id the user ID
+     * @param id      the user ID
      * @param request updated user data
      * @return updated user DTO
      */

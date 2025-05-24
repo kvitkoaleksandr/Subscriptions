@@ -1,6 +1,7 @@
 package com.example.subscriptions.service.impl;
 
-import com.example.subscriptions.dto.*;
+import com.example.subscriptions.dto.CreateUserRequest;
+import com.example.subscriptions.dto.UserDto;
 import com.example.subscriptions.entity.User;
 import com.example.subscriptions.exception.ResourceNotFoundException;
 import com.example.subscriptions.kafka.UserEventProducer;
@@ -42,13 +43,18 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value = "users", key = "#id")
     public UserDto getUserById(Long id) {
-        log.debug("Fetching user with ID: {}", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("User not found with ID: {}", id);
-                    return new ResourceNotFoundException("User not found");
-                });
-        return UserMapper.toDto(user);
+        try {
+            log.debug("Fetching user with ID: {}", id);
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> {
+                        log.warn("User not found with ID: {}", id);
+                        return new ResourceNotFoundException("User not found");
+                    });
+            return UserMapper.toDto(user);
+        } catch (Exception e) {
+            log.error("Ошибка при получении пользователя по ID из Redis или БД", e);
+            throw e; // обязательно пробрось дальше, иначе вернётся 200
+        }
     }
 
     @Override

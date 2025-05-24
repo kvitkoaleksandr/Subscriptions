@@ -1,7 +1,8 @@
 package com.example.subscriptions.mapper;
 
-import com.example.subscriptions.dto.*;
-import com.example.subscriptions.entity.*;
+import com.example.subscriptions.dto.CreateUserRequest;
+import com.example.subscriptions.dto.UserDto;
+import com.example.subscriptions.entity.User;
 
 import java.util.stream.Collectors;
 

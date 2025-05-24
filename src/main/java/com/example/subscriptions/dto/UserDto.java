@@ -14,12 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDto implements Serializable {
+
     /**
      * Unique identifier of the user.
      */
     private Long id;
     private String name;
     private String email;
+
     /**
      * List of subscriptions associated with the user.
      */

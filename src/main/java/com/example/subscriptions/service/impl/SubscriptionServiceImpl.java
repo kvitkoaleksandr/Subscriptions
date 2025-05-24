@@ -1,7 +1,9 @@
 package com.example.subscriptions.service.impl;
 
-import com.example.subscriptions.dto.*;
-import com.example.subscriptions.entity.*;
+import com.example.subscriptions.dto.CreateSubscriptionRequest;
+import com.example.subscriptions.dto.SubscriptionDto;
+import com.example.subscriptions.entity.Subscription;
+import com.example.subscriptions.entity.User;
 import com.example.subscriptions.exception.ResourceNotFoundException;
 import com.example.subscriptions.mapper.SubscriptionMapper;
 import com.example.subscriptions.repository.SubscriptionRepository;
@@ -11,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

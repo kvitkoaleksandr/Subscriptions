@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 @SpringBootApplication
 public class SubscriptionsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SubscriptionsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SubscriptionsApplication.class, args);
+    }
 }
