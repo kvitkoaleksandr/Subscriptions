@@ -25,7 +25,7 @@ class UserControllerIT {
     private TestRestTemplate rest;
 
     @MockBean
-    private UserEventProducer userEventProducer; // <--- вот это ключ!
+    private UserEventProducer userEventProducer;
 
     private String baseUrl() {
         return "http://localhost:" + port + "/users";

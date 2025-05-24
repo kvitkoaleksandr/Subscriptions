@@ -1,5 +1,6 @@
-package com.example.subscriptions.advice;
+package com.example.subscriptions.exception;
 
+import com.example.subscriptions.exception.GlobalExceptionHandler;
 import com.example.subscriptions.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

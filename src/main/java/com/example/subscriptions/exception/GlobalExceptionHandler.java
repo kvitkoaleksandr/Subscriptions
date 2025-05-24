@@ -1,4 +1,4 @@
-package com.example.subscriptions.advice;
+package com.example.subscriptions.exception;
 
 import com.example.subscriptions.exception.ResourceNotFoundException;
 import org.springframework.http.*;
@@ -29,6 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneric(Exception ex) {
+        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", ex.getMessage()));
     }
 }

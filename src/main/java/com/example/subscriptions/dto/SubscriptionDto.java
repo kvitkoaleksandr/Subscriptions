@@ -2,6 +2,8 @@ package com.example.subscriptions.dto;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 /**
  * DTO representing a user's subscription to a service.
  */
@@ -10,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubscriptionDto {
+public class SubscriptionDto implements Serializable {
     private Long id;
     private String serviceName;
 }
